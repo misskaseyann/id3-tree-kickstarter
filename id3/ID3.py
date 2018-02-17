@@ -2,25 +2,28 @@ import math
 import numpy as np
 
 class ID3(object):
-    def __init__(self, data):
-        self.data = data
-        self.es = None
+    def __init__(self):
+        #  Entropy of the system.
+        self.esystem = None
+        self.eattribute = None
+        #  The oracle of the data.
+        self.oracle = None
 
-    def entropy(self, s, k):
+    def entropySys(self, s, k):
         """
-
         :param s: collection of data
         :param k: categories numpy array [all values][the categories]
         :return:
         """
         #  Cardinality of the collection.
-        sc = s.shape[0]
-        
+        size = s.shape[0]
+        poison = 0   #  true
+        edible = 0   #  false
         #  Find how many T/F values there are.
-        for answer in oracle:
-            if answer == 1:
-                true += 1
-            if answer == 0:
-                false += 1
+        for answer in self.oracle:
+            if answer == 'p':
+                poison += 1
+            if answer == 'e':
+                edible += 1
 
-        self.es = -(true/size) * math.log((true/size), 2) - (false/size) * math.log((false/size), 2)
+        return -(poison/size) * math.log((poison/size), 2) - (edible/size) * math.log((edible/size), 2)
