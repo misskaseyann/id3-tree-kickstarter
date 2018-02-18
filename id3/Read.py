@@ -22,9 +22,17 @@ class Read(object):
         """
         if os.path.isfile(self.fp):
             file = open(self.fp, 'r+', encoding='utf-8')
-            raw = file.read()
-            data = re.split('\n', raw)
-            return data
+            data = []
+            d = []
+            for line in file.readlines():
+                d.append(line.strip())
+            for d1 in d:
+                data.append(d1.split(","))
+            file.close()
+
+            # raw = file.read()
+            # data = re.split('\n', raw)
+            # return data
         else:
             print("Improper file path.")
 
