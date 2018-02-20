@@ -25,7 +25,7 @@ class DecisionTree(object):
             data[d] = data[d][:-1]
         return data, classes, self.features
 
-    def grow_tree(self, data, classes, features, maxlevel=-1, level=0):
+    def grow_tree(self, data, classes, features, maxlevel=5, level=0):
         numdata = len(data)
         numfeatures = len(data[0])
 
@@ -44,16 +44,20 @@ class DecisionTree(object):
         total_entropy = 0
         total_gini = 0
         i = 0
+        threshold = False
         for this_class in newclasses:
             freq[i] = classes.count(this_class)
             total_entropy += self.entropy(freq[i]/numdata)
             total_gini += (freq[i]/numdata) ** 2
+            freqval = freq[i]/numdata
+            if freqval > 0.95:
+                threshold = True
             i += 1
 
         total_gini = 1 - total_gini
         max = classes[np.argmax(freq)]
 
-        if numdata == 0 or numfeatures == 0 or (maxlevel >= 0 and level > maxlevel):
+        if numdata == 0 or numfeatures == 0 or (maxlevel >= 0 and level > maxlevel) or len(freq) == 1 or (level > 0 and threshold == True):
             #  No more attributes to test.
             return max
         elif classes.count(classes[0]) == numdata:
@@ -161,11 +165,31 @@ class DecisionTree(object):
             vi += 1
         return gain, 1 - gini_gain
 
-    def printTree(self, tree, name):
+    def print_tree(self, tree, name):
         if type(tree) == dict:
             print(name, list(tree.keys())[0])
             for item in list(tree.values())[0].keys():
                 print(name, item)
-                self.printTree(list(tree.values())[0][item], name + "\t")
+                self.print_tree(list(tree.values())[0][item], name + "\t")
         else:
             print(name, "\t->\t", tree)
+
+    def classifier(self, tree, data):
+        if type(tree) == type("string"):
+            return tree
+        else:
+            a = list(tree.keys())[0]
+            for i in range(len(self.features)):
+                if self.features[i] == a:
+                    break
+            try:
+                t = tree[a][data[i]]
+                return self.classifier(t, data)
+            except:
+                return None
+
+    def run_classifier(self, tree, data):
+        results = []
+        for i in range(len(data)):
+            results.append(self.classifier(tree, data[i]))
+        return results
