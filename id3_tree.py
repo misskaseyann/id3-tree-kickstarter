@@ -2,10 +2,10 @@ from id3.DecisionTree import DecisionTree
 
 if __name__ == "__main__":
     dt = DecisionTree()
-    data, classes, features = dt.process_data("/Users/kaseystowell/Documents/workspace/id3tree/data/salarytraindata.csv")
+    data, classes, features = dt.process_data("train")
     t = dt.grow_tree(data, classes, features)
     dt.print_tree(t, ' ')
-    data, classes, features = dt.process_data("/Users/kaseystowell/Documents/workspace/id3tree/data/salarytestdata.csv")
+    data, classes, features = dt.process_data("test")
     arr = dt.run_classifier(t, data)
     print("True classes...")
     print(classes)
